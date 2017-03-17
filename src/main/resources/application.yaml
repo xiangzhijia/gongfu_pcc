@@ -1,0 +1,42 @@
+#测试代码
+yhqb: 
+   secret: ${random.value}
+   url: www.yhqb.com
+   desc: ${yhqb.url} 1201 is to
+
+#时间格式化
+spring:
+   profiles:
+     active: test
+   datasource: 
+     type: com.zaxxer.hikari.HikariDataSource
+     url: jdbc:mysql://localhost:3306/xzj
+     username: root
+     password: admin
+
+#dev环境     
+---
+spring:
+     profiles: dev
+     
+server:
+     port: 8080     
+     
+#test环境
+---
+spring:
+     profiles: test
+     thymeleaf: 
+           cache: false  
+server:
+     port: 8081
+
+#生产环境
+---
+spring:
+     profiles: pro
+     
+server:
+     port: 8082      
+     
+      
