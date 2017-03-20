@@ -1,5 +1,6 @@
 package com.gongfu.config;
 
+import io.swagger.annotations.ApiOperation;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -27,7 +28,7 @@ public class Swagger2Configuration {
     public Docket accessToken() {
         return new Docket(DocumentationType.SWAGGER_2).groupName("api")// 定义组
                 .select() // 选择那些路径和api会生成document
-                .apis(RequestHandlerSelectors.basePackage("com.yhqz.controller")) // 拦截的包路径
+                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class)) // 拦截的包路径
                 .paths(regex("/api/.*"))// 拦截的接口路径
                 .build() // 创建
                 .apiInfo(apiInfo()); // 配置说明

@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * 2017年1月8日
  *
- * @向治家 yhqb AuthInterceptor.java
+ * @向治家
  **/
 @Slf4j
 public class AuthInterceptor extends HandlerInterceptorAdapter {

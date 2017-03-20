@@ -1,6 +1,6 @@
 package com.gongfu.config;
 
-import com.gongfu.web.BaseController;
+import com.gongfu.base.BaseController;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;

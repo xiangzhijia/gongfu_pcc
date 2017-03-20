@@ -1,4 +1,4 @@
-package com.gongfu.web;
+package com.gongfu.base;
 
 import lombok.extern.slf4j.Slf4j;
 

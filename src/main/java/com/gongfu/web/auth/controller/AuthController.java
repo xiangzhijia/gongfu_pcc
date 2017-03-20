@@ -1,11 +1,12 @@
 package com.gongfu.web.auth.controller;
 
 
+import com.gongfu.base.BaseController;
 import com.gongfu.config.interceptor.support.AuthFree;
-import com.gongfu.web.BaseController;
 import com.google.code.kaptcha.Constants;
 import com.google.code.kaptcha.Producer;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +32,7 @@ public class AuthController extends BaseController {
     @Autowired
     private Producer captchaProducer;
 
+    @ApiOperation(value = "验证码", notes = "刷新验证码")
     @RequestMapping(value = "/captcha", method = RequestMethod.GET)
     @AuthFree
     public void captcha(HttpServletRequest request, HttpServletResponse response) throws IOException {

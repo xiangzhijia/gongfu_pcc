@@ -14,6 +14,24 @@ spring:
      username: root
      password: admin
 
+mybatis:
+    type-aliases-package: com.gongfu.model
+    mapper-locations: classpath:mapper/*.xml
+    config-location: classpath:mybatis-config.xml
+
+mapper:
+    mappers:
+        - com.gongfu.base.PccBaseMapper
+    not-empty: true
+    identity: MYSQL
+
+
+pagehelper:
+    helperDialect: mysql
+    reasonable: true
+    supportMethodsArguments: true
+    params: count=countSql
+
 #dev环境     
 ---
 spring:

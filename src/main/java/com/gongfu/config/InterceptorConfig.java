@@ -34,6 +34,9 @@ public class InterceptorConfig extends WebMvcConfigurerAdapter {
         super.addInterceptors(registry);
     }
 
+    /********************************
+     * 配置参数解析器（用于接收参数）
+     *******************************/
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         log.info("InterceptorConfig→{addArgumentResolvers}");
