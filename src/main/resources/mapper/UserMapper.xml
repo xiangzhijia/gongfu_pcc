@@ -1,6 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.gongfu.web.user.mapper.UserMapper">
+<mapper namespace="com.gongfu.mapper.user.UserMapper">
 
-
+    <!--优化了 LIMIT 分页,数据量很大时，分页性能超越普通的分页方式-->
+    <select id="getUserInfo" resultType="com.gongfu.model.user.User">
+       SELECT
+            id,
+            NAME,
+            created_at as createdAt,
+            nick,
+            PASSWORD
+        FROM
+            gongfu_user
+        WHERE
+           <![CDATA[ created_at >= #{beginDate} ]]>
+        AND
+           <![CDATA[ created_at <= #{endDate} ]]>
+        AND id >= (
+            SELECT
+                id
+            FROM
+                gongfu_user
+            LIMIT #{offset},
+            1
+        )
+        LIMIT #{limit}
+    </select>
 </mapper>

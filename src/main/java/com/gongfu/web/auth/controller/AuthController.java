@@ -22,12 +22,11 @@ import java.io.IOException;
 /**
  * 2017年1月9日
  *
- * @向治家 yhqb
- * AuthRest.java
+ * @向治家
  **/
 @RestController
 @RequestMapping(path = BaseController.API_ADMIN + "/auth", produces = {MediaType.APPLICATION_JSON_VALUE})
-@Api(tags = "授权认证")
+@Api(description = "授权管理")
 public class AuthController extends BaseController {
     @Autowired
     private Producer captchaProducer;

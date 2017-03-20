@@ -5,4 +5,6 @@ package com.gongfu.config.code;
  */
 public class RegexpCode {
     public static final String EMAIL = "\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*";
+    public static final String DATETIME = "[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}";
+    public static final String DATE = "[0-9]{4}-[0-9]{2}-[0-9]{2}";
 }

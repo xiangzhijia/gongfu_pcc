@@ -53,6 +53,15 @@ public class RestModel extends LinkedHashMap<String, Object> {
         return this;
     }
 
+    public RestModel body(Object body, Integer totalRecord) {
+        succ();
+        if (body != null) {
+            put("data", body);
+            put("totalRecord", totalRecord);
+        }
+        return this;
+    }
+
     public RestModel succ() {
         this.put("status", "succ");
         return this;

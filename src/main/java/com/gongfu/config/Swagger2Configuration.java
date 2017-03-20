@@ -1,6 +1,7 @@
 package com.gongfu.config;
 
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -19,11 +20,9 @@ import static springfox.documentation.builders.PathSelectors.regex;
  **/
 @Configuration
 @EnableSwagger2
+@Slf4j
 public class Swagger2Configuration {
 
-    /**
-     * @return
-     */
     @Bean
     public Docket accessToken() {
         return new Docket(DocumentationType.SWAGGER_2).groupName("api")// 定义组
@@ -38,10 +37,7 @@ public class Swagger2Configuration {
         return new ApiInfoBuilder()//
                 .title("功夫旅行")// 标题
                 .description("功夫旅行平台  《请求接口》")// 描述
-                .termsOfServiceUrl("http://www.pkfare.com")//
-                //.contact(new Contact("xiangzhijia", "http://www.pkfare.com", "494856845@qq.com"))// 联系
-                //.license("Apache License Version 2.0")// 开源协议
-                //.licenseUrl("http://www.pkfare.com")// 地址
+                .termsOfServiceUrl("http://www.pkfare.com")
                 .version("1.0")// 版本
                 .build();
     }

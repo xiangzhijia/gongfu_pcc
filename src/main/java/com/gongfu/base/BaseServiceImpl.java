@@ -1,17 +1,11 @@
 package com.gongfu.base;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
-import com.gongfu.config.interceptor.support.DbCriteria;
-import com.gongfu.model.JsonResult;
-import com.gongfu.model.Page;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.common.Mapper;
 import tk.mybatis.mapper.entity.Example;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,49 +66,7 @@ public abstract class BaseServiceImpl<T> implements BaseService<T> {
     public Integer findCount() {
         return this.mapper.selectCount(null);
     }
-
-    /**
-     * 根据条件分页查询
-     *
-     * @param t
-     * @return
-     */
-    @Override
-    public JsonResult<T> findAllByPage(T t, Page page) throws Exception {
-        if (page.valid()) {
-            PageHelper.offsetPage(page.getOffset(), page.getLimit());
-        }
-        Example example = new Example(this.clazz);
-        Example.Criteria criteria = example.createCriteria();
-        Field[] fields = t.getClass().getDeclaredFields();
-        for (Field field : fields) {
-            field.setAccessible(true);
-            if (field.getType() != String.class) {
-                continue;
-            }
-            if (field.get(t) == null || StringUtils.isBlank(field.get(t).toString())) {
-                continue;
-            }
-            DbCriteria annotation = field.getAnnotation(DbCriteria.class);
-            if (annotation == null) {
-                continue;
-            }
-            switch (annotation.method()) {
-                case andLike:
-                    criteria.andLike(field.getName(), "%" + field.get(t).toString() + "%");
-                    break;
-                case andEqualTo:
-                    criteria.andEqualTo(field.getName(), field.get(t).toString());
-                    break;
-                default:
-                    break;
-            }
-        }
-        List<T> list = this.mapper.selectByExample(example);
-        return new JsonResult(new PageInfo(list).getTotal(), list);
-    }
-
-
+    
     /**
      * 根据条件查询一条
      *

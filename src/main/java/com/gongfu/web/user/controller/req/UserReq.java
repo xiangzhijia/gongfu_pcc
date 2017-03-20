@@ -17,6 +17,7 @@ public class UserReq {
     @NotNull(message = "姓名不能为空", groups = {Default.class})
     private String name;
     @ApiModelProperty(value = "时间")
+    @Pattern(regexp = RegexpCode.DATE, message = "时间格式不正确", groups = {Default.class})
     private String createdAt;
     @ApiModelProperty(value = "昵称")
     private String nick;

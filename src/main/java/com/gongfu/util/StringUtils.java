@@ -3,8 +3,7 @@ package com.gongfu.util;
 /**
  * 2017年1月13日
  *
- * @向治家 yhqb
- * StringUtils.java
+ * @向治家
  **/
 public class StringUtils extends org.apache.commons.lang3.StringUtils {
 

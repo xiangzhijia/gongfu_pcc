@@ -1,9 +1,6 @@
 package com.gongfu.base;
 
 
-import com.gongfu.model.JsonResult;
-import com.gongfu.model.Page;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -22,8 +19,6 @@ public interface BaseService<T> {
 
     List<T> findAll(T t);
 
-    JsonResult<T> findAllByPage(T t, Page page) throws Exception;
-
     Integer save(T t);
 
     Integer updateById(T t);
@@ -33,6 +28,5 @@ public interface BaseService<T> {
     Integer deleteById(Long id);
 
     Integer deleteByIds(List<Long> ids);
-
 
 }

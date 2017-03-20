@@ -5,13 +5,13 @@ import com.gongfu.base.PccBaseMapper;
 import com.gongfu.model.user.User;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * Created by feng on 2017/1/23.
  */
 public interface UserMapper extends PccBaseMapper<User> {
 
-    void updatePassword(@Param("user") User user);
-
-    void updateStatus(@Param("staffId") Long id, @Param("status") String status);
+    List<User> getUserInfo(@Param("beginDate") String beginDate, @Param("endDate") String endDate, @Param("offset") int offset, @Param("limit") int limit);
 
 }
