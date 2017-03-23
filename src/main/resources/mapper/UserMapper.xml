@@ -26,4 +26,15 @@
         )
         LIMIT #{limit}
     </select>
+
+    <select id="countUserInfo" resultType="Long">
+      SELECT
+            COUNT(1)
+        FROM
+            gongfu_user
+        WHERE
+          <![CDATA[ created_at >= #{beginDate} ]]>
+        AND
+           <![CDATA[ created_at <= #{endDate} ]]>
+    </select>
 </mapper>

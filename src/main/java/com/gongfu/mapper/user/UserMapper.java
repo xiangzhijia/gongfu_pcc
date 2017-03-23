@@ -14,4 +14,6 @@ public interface UserMapper extends PccBaseMapper<User> {
 
     List<User> getUserInfo(@Param("beginDate") String beginDate, @Param("endDate") String endDate, @Param("offset") int offset, @Param("limit") int limit);
 
+    Long countUserInfo(@Param("beginDate") String beginDate, @Param("endDate") String endDate);
+
 }

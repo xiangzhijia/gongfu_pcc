@@ -1,7 +1,11 @@
 package com.gongfu.base;
 
+import com.alibaba.fastjson.JSON;
 import com.gongfu.config.code.ErrorCode;
+import org.springframework.http.MediaType;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.LinkedHashMap;
 
 
@@ -53,7 +57,7 @@ public class RestModel extends LinkedHashMap<String, Object> {
         return this;
     }
 
-    public RestModel body(Object body, Integer totalRecord) {
+    public RestModel body(Object body, Long totalRecord) {
         succ();
         if (body != null) {
             put("data", body);
@@ -70,5 +74,10 @@ public class RestModel extends LinkedHashMap<String, Object> {
     public RestModel succ(String message) {
         this.put("message", message);
         return succ();
+    }
+
+    public void responseJson(HttpServletResponse response) throws IOException {
+        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        response.getWriter().write(JSON.toJSONString(this));
     }
 }

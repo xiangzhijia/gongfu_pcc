@@ -23,4 +23,9 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
     public List<User> getUserInfo(String beginDate, String endDate, int size, int page) {
         return userMapper.getUserInfo(beginDate + StringCode.BEGIN, endDate + StringCode.END, page * size, size);
     }
+
+    @Override
+    public Long countUserInfo(String beginDate, String endDate) {
+        return userMapper.countUserInfo(beginDate + StringCode.BEGIN, endDate + StringCode.END);
+    }
 }

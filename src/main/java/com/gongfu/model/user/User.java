@@ -5,11 +5,13 @@ import lombok.Data;
 
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
 @Table(name = "gongfu_user")
-public class User {
+public class User implements Serializable {
+    private static final long serialVersionUID = 3310686253938680785L;
     @Id
     private Long id;
     private String name;

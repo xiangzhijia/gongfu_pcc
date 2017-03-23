@@ -12,4 +12,6 @@ public interface UserService extends BaseService<User> {
     Integer save(User user);
 
     List<User> getUserInfo(String beginDate, String endDate, int size, int page);
+
+    Long countUserInfo(String beginDate, String endDate);
 }

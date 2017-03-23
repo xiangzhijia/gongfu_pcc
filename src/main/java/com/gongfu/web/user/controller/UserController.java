@@ -2,6 +2,8 @@ package com.gongfu.web.user.controller;
 
 import com.gongfu.base.BaseController;
 import com.gongfu.base.RestModel;
+import com.gongfu.config.interceptor.support.AuthPassport;
+import com.gongfu.config.interceptor.support.enums.Role;
 import com.gongfu.model.user.User;
 import com.gongfu.util.ValidatorUtil;
 import com.gongfu.web.user.controller.req.UserReq;
@@ -14,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
@@ -33,7 +36,8 @@ public class UserController extends BaseController {
 
     @ApiOperation(value = "新增", notes = "用户新增接口")
     @RequestMapping(path = {"/add"}, method = POST)
-    public RestModel saveUser(@ApiParam(value = "用户实体", required = true) @RequestBody @Valid UserReq userReq, BindingResult bindingResult) {
+    @AuthPassport(role = Role.ADMIN)
+    public RestModel saveUser(@ApiParam(value = "用户实体", required = true) @RequestBody @Valid UserReq userReq, BindingResult bindingResult, HttpServletRequest request) {
         if (bindingResult.hasErrors()) {
             return ValidatorUtil.handleBingResult(bindingResult);
         }
@@ -42,6 +46,7 @@ public class UserController extends BaseController {
         user.setNick(userReq.getNick());
         user.setCreatedAt(new Date());
         user.setPassword(userReq.getPassword());
+        user.setLastLoginIp(getRealIp(request));
         Integer result = userService.save(user);
         if (result == 0) {
             return RestModel.create().errorMsg(1007, "操作失败了");
@@ -80,6 +85,7 @@ public class UserController extends BaseController {
                                  @ApiParam(value = "分页大小", required = true, defaultValue = "10") @RequestParam("size") int size,
                                  @ApiParam(value = "第几页，从0开始", required = true, defaultValue = "0") @RequestParam("page") int page) throws Exception {
         List<User> list = userService.getUserInfo(beginDate, endDate, size, page);
-        return RestModel.create().body(list, 10);
+        Long count = userService.countUserInfo(beginDate, endDate);
+        return RestModel.create().body(list, count);
     }
 }

@@ -10,9 +10,9 @@ package com.gongfu.config.interceptor.constant;
 public final class CacheKey {
 
     /**
-     * app管理区
+     * 用户信息
      */
-    public static final String REGION_APPS_ADMIN = "app_admin";
+    public static final String REGION_USER = "user";
 
 
     /********************************

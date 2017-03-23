@@ -20,7 +20,6 @@ public class BaseController {
      */
     public static String getRealIp(HttpServletRequest req) {
         // 使用x-forwarded-for可能会有2个ip，如：218.18.1.129, 183.60.52.5
-        // return req.getHeader("x-forwarded-for") == null ? req.getRemoteAddr() : req.getHeader("x-forwarded-for");
         return req.getHeader("X-Real-IP") == null ? req.getRemoteAddr() : req.getHeader("X-Real-IP");
     }
 

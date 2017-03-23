@@ -3,7 +3,7 @@ package com.gongfu.exception;
 /**
  * 2017年1月9日
  *
- * @向治家 yhqb ValidationException.java
+ * @向治家
  **/
 public class ValidationException extends RuntimeException {
 

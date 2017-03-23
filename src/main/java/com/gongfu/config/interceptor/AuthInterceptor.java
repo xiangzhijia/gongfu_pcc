@@ -1,6 +1,16 @@
 package com.gongfu.config.interceptor;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.gongfu.base.RestModel;
+import com.gongfu.config.interceptor.constant.CacheKey;
+import com.gongfu.config.interceptor.constant.HttpConstant;
+import com.gongfu.config.interceptor.constant.RedisComponent;
+import com.gongfu.config.interceptor.support.AuthPassport;
+import com.gongfu.model.user.User;
+import com.gongfu.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -16,6 +26,9 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public class AuthInterceptor extends HandlerInterceptorAdapter {
 
+    @Autowired
+    private RedisComponent redisComponent;
+
     /**
      * 发起请求,进入拦截器链，运行所有拦截器的preHandle方法，
      * 当preHandle方法返回false时，从当前拦截器往回执行所有拦截器的afterCompletion方法，再退出拦截器链
@@ -30,7 +43,40 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
          * 这是类对象进行检查,此方法返回布尔值，它指示是否该类型cls对象可以被分配到这个类的对象。
          */
         if (handler.getClass().isAssignableFrom(HandlerMethod.class)) {
+            AuthPassport authPassport = ((HandlerMethod) handler).getMethodAnnotation(AuthPassport.class);
 
+            // 没有声明需要权限,或者声明不验证权限
+            if (authPassport == null || authPassport.validate() == false) {
+                return true;
+            }
+
+            /**
+             * 请求头:
+             * x-gongfu-client: {"role":"ADVISER","version":"v1.1.1","deviceId":"1234fads"}
+             * x-gongfu-token: dobkvu7ukcmd3mjv9e53d86mio
+             */
+            // 缺少必须的请求头信息
+            JSONObject clientInfo = null;
+            try {
+                clientInfo = JSON.parseObject(request.getHeader(HttpConstant.HTTP_HEADER_CLIENT));
+                if (clientInfo == null)
+                    throw new Exception();
+            } catch (Exception e) {
+                RestModel model = RestModel.create().errorMsg("非法请求头或请求头为空[x-gongfu-client]");
+                model.responseJson(response);
+                return false;
+            }
+
+            String token = request.getHeader(HttpConstant.HTTP_HEADER_TOKEN);
+            if (StringUtils.isEmpty(token)) {
+                String warning = String.format("token[%s] required!", token);
+                log.warn(warning);
+                RestModel model = RestModel.create().errorMsg(warning);
+                model.responseJson(response);
+                return false;
+            }
+            User user = (User) redisComponent.objectGet(CacheKey.REGION_USER + "_" + token);
+            log.info("user=" + user);
         }
         return true;
     }
