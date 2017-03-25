@@ -3,14 +3,14 @@ package com.gongfu.config.interceptor;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.gongfu.base.RestModel;
-import com.gongfu.config.interceptor.constant.CacheKey;
+import com.gongfu.config.code.StringCode;
 import com.gongfu.config.interceptor.constant.HttpConstant;
-import com.gongfu.config.interceptor.constant.RedisComponent;
 import com.gongfu.config.interceptor.support.AuthPassport;
+import com.gongfu.config.interceptor.support.ClientInfo;
+import com.gongfu.config.interceptor.support.enums.Role;
 import com.gongfu.model.user.User;
 import com.gongfu.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -25,9 +25,6 @@ import javax.servlet.http.HttpServletResponse;
  **/
 @Slf4j
 public class AuthInterceptor extends HandlerInterceptorAdapter {
-
-    @Autowired
-    private RedisComponent redisComponent;
 
     /**
      * 发起请求,进入拦截器链，运行所有拦截器的preHandle方法，
@@ -52,14 +49,13 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 
             /**
              * 请求头:
-             * x-gongfu-client: {"role":"ADVISER","version":"v1.1.1","deviceId":"1234fads"}
-             * x-gongfu-token: dobkvu7ukcmd3mjv9e53d86mio
+             * x-gongfu-client: {"role":"ADVISER","version":"v1.1.1","deviceId":"pc","token":"dobkvu7ukcmd3mjv9e53d86mio"}
              */
             // 缺少必须的请求头信息
-            JSONObject clientInfo = null;
+            JSONObject jsonObject = null;
             try {
-                clientInfo = JSON.parseObject(request.getHeader(HttpConstant.HTTP_HEADER_CLIENT));
-                if (clientInfo == null)
+                jsonObject = JSON.parseObject(request.getHeader(HttpConstant.HTTP_HEADER_CLIENT));
+                if (jsonObject == null)
                     throw new Exception();
             } catch (Exception e) {
                 RestModel model = RestModel.create().errorMsg("非法请求头或请求头为空[x-gongfu-client]");
@@ -67,16 +63,42 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
                 return false;
             }
 
-            String token = request.getHeader(HttpConstant.HTTP_HEADER_TOKEN);
-            if (StringUtils.isEmpty(token)) {
-                String warning = String.format("token[%s] required!", token);
-                log.warn(warning);
-                RestModel model = RestModel.create().errorMsg(warning);
+            ClientInfo clientInfo = JSON.parseObject(jsonObject.toString(), ClientInfo.class);
+
+            if (clientInfo.getDeviceId().equals(HttpConstant.DEVICE_PC)) {  //PC过来的请求
+                User user = (User) request.getSession().getAttribute(StringCode.USER);
+                if (user == null) {
+                    RestModel model = RestModel.create().errorMsg(1001, "会话失效或未登录，请重新登录");
+                    model.responseJson(response);
+                    return false;
+                }
+            } else if (clientInfo.getDeviceId().equals(HttpConstant.DEVICE_APP)) {//APP过来的请求
+                String token = clientInfo.getToken();
+                if (StringUtils.isEmpty(token)) {
+                    String warning = String.format("token[%s] required!", token);
+                    log.warn(warning);
+                    RestModel model = RestModel.create().errorMsg(warning);
+                    model.responseJson(response);
+                    return false;
+                }
+            } else {
+                RestModel model = RestModel.create().errorMsg("非法入侵我可是要报警的");
                 model.responseJson(response);
                 return false;
             }
-            User user = (User) redisComponent.objectGet(CacheKey.REGION_USER + "_" + token);
-            log.info("user=" + user);
+
+            Role role = clientInfo.getRole();
+            Role expectedRole = authPassport.role();
+            if (expectedRole == Role.ALL) {
+                return true;
+            }
+
+            //PC请求的时候，要设置用户权限
+            if (expectedRole != role) {
+                RestModel model = RestModel.create().errorMsg("权限不足");
+                model.responseJson(response);
+                return false;
+            }
         }
         return true;
     }

@@ -12,7 +12,12 @@ public class HttpConstant {
      */
     public final static String HTTP_HEADER_CLIENT = "x-gongfu-client";
     /**
-     * 代表客户端认证信息的token
+     * 设备号:PC
      */
-    public final static String HTTP_HEADER_TOKEN = "x-gongfu-token";
+    public final static String DEVICE_PC = "PC";
+
+    /**
+     * 设备号:APP
+     */
+    public final static String DEVICE_APP = "APP";
 }

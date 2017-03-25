@@ -2,14 +2,26 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.gongfu.mapper.user.UserMapper">
 
+    <select id="login" resultType="com.gongfu.model.user.User">
+        SELECT
+            id,
+            user_name,
+            nick
+        FROM
+            gongfu_user
+        WHERE
+            user_name = #{loginReq.username}
+        AND password = #{loginReq.password}
+    </select>
+
     <!--优化了 LIMIT 分页,数据量很大时，分页性能超越普通的分页方式-->
     <select id="getUserInfo" resultType="com.gongfu.model.user.User">
        SELECT
             id,
-            NAME,
+            user_name as userName,
             created_at as createdAt,
             nick,
-            PASSWORD
+            password
         FROM
             gongfu_user
         WHERE
@@ -25,6 +37,21 @@
             1
         )
         LIMIT #{limit}
+    </select>
+
+    <select id="getUserPageHelper" resultType="com.gongfu.model.user.User">
+         SELECT
+            id,
+            user_name as userName,
+            created_at as createdAt,
+            nick,
+            password
+        FROM
+            gongfu_user
+        WHERE
+           <![CDATA[ created_at >= #{beginDate} ]]>
+        AND
+           <![CDATA[ created_at <= #{endDate} ]]>
     </select>
 
     <select id="countUserInfo" resultType="Long">

@@ -31,10 +31,8 @@ public class Swagger2Configuration {
 
     @Bean
     public Docket accessToken() {
-        Parameter clientParameter = new Parameter("x-gongfu-client", "客户端信息", "{\"role\":\"ADVISER\",\"version\":\"v1.1.1\",\"deviceId\":\"1234fads\"}", true, false, new ModelRef("String"), Optional.absent(), null, "header", null, false, null);
-        Parameter tokenParameter = new Parameter("x-gongfu-token", "访问令牌", "dobkvu7ukcmd3mjv9e53d86mio", true, false, new ModelRef("String"), Optional.absent(), null, "header", null, false, null);
-        List<Parameter> list = Arrays.asList(clientParameter, tokenParameter);
-
+        Parameter clientParameter = new Parameter("x-gongfu-client", "客户端信息", "{\"role\":\"ADVISER\",\"version\":\"v1.1.1\",\"deviceId\":\"PC\"}", true, false, new ModelRef("String"), Optional.absent(), null, "header", null, false, null);
+        List<Parameter> list = Arrays.asList(clientParameter);
         return new Docket(DocumentationType.SWAGGER_2).groupName("api")// 定义组
                 .globalOperationParameters(list)
                 .select() // 选择那些路径和api会生成document

@@ -1,5 +1,6 @@
 package com.gongfu.web.user.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.gongfu.base.BaseController;
 import com.gongfu.base.RestModel;
 import com.gongfu.config.interceptor.support.AuthPassport;
@@ -36,13 +37,13 @@ public class UserController extends BaseController {
 
     @ApiOperation(value = "新增", notes = "用户新增接口")
     @RequestMapping(path = {"/add"}, method = POST)
-    @AuthPassport(role = Role.ADMIN)
+    @AuthPassport
     public RestModel saveUser(@ApiParam(value = "用户实体", required = true) @RequestBody @Valid UserReq userReq, BindingResult bindingResult, HttpServletRequest request) {
         if (bindingResult.hasErrors()) {
             return ValidatorUtil.handleBingResult(bindingResult);
         }
         User user = new User();
-        user.setName(userReq.getName());
+        user.setUserName(userReq.getName());
         user.setNick(userReq.getNick());
         user.setCreatedAt(new Date());
         user.setPassword(userReq.getPassword());
@@ -56,6 +57,7 @@ public class UserController extends BaseController {
 
     @ApiOperation(value = "修改密码", notes = "根据用户名修改密码")
     @RequestMapping(value = "update/password", method = PUT)
+    @AuthPassport
     public RestModel updatePassword(@ApiParam(value = "用户id", required = true, defaultValue = "") @RequestParam("id") Long id,
                                     @ApiParam(value = "密码", required = true, defaultValue = "") @RequestParam("password") String password) {
         User user = new User();
@@ -70,7 +72,8 @@ public class UserController extends BaseController {
 
     @ApiOperation(value = "删除用户", notes = "根据用户名ID")
     @RequestMapping(value = "delete/user/{id}", method = DELETE)
-    public RestModel deleteUser(@PathVariable("id") Long id) {
+    @AuthPassport(role = Role.ADMIN)
+    public RestModel deleteUser(@PathVariable("id") Long id, HttpServletRequest request) {
         Integer result = userService.deleteById(id);
         if (result == 0) {
             return RestModel.create().errorMsg(1007, "操作失败了");
@@ -78,8 +81,9 @@ public class UserController extends BaseController {
         return RestModel.create().succ();
     }
 
-    @ApiOperation(value = "查询用户", notes = "用户列表")
+    @ApiOperation(value = "查询用户", notes = "用户列表(普通分页)")
     @RequestMapping(value = "user/info", method = GET)
+    @AuthPassport
     public RestModel getUserInfo(@ApiParam(value = "当前时间", required = true) @RequestParam(value = "beginDate") String beginDate,
                                  @ApiParam(value = "结束时间", required = true) @RequestParam("endDate") String endDate,
                                  @ApiParam(value = "分页大小", required = true, defaultValue = "10") @RequestParam("size") int size,
@@ -87,5 +91,16 @@ public class UserController extends BaseController {
         List<User> list = userService.getUserInfo(beginDate, endDate, size, page);
         Long count = userService.countUserInfo(beginDate, endDate);
         return RestModel.create().body(list, count);
+    }
+
+    @ApiOperation(value = "查询用户", notes = "用户列表(PageHelper分页)")
+    @RequestMapping(value = "user/page-helper", method = GET)
+    @AuthPassport
+    public RestModel getUserPageHelper(@ApiParam(value = "当前时间", required = true) @RequestParam(value = "beginDate") String beginDate,
+                                       @ApiParam(value = "结束时间", required = true) @RequestParam("endDate") String endDate,
+                                       @ApiParam(value = "分页大小", required = true, defaultValue = "10") @RequestParam("size") int size,
+                                       @ApiParam(value = "第几页", required = true, defaultValue = "1") @RequestParam("page") int page) throws Exception {
+        PageInfo list = userService.getUserPageHelper(beginDate, endDate, size, page);
+        return RestModel.create().body(list.getList(), list.getTotal());
     }
 }

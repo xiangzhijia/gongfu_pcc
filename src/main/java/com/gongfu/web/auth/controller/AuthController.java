@@ -2,13 +2,21 @@ package com.gongfu.web.auth.controller;
 
 
 import com.gongfu.base.BaseController;
-import com.gongfu.config.interceptor.support.AuthFree;
+import com.gongfu.base.RestModel;
+import com.gongfu.config.interceptor.support.AuthPassport;
+import com.gongfu.model.user.User;
+import com.gongfu.util.ValidatorUtil;
+import com.gongfu.web.auth.controller.req.LoginReq;
+import com.gongfu.web.user.service.system.UserService;
 import com.google.code.kaptcha.Constants;
 import com.google.code.kaptcha.Producer;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,8 +24,11 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * 2017年1月9日
@@ -30,10 +41,11 @@ import java.io.IOException;
 public class AuthController extends BaseController {
     @Autowired
     private Producer captchaProducer;
+    @Autowired
+    private UserService userService;
 
     @ApiOperation(value = "验证码", notes = "刷新验证码")
     @RequestMapping(value = "/captcha", method = RequestMethod.GET)
-    @AuthFree
     public void captcha(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setDateHeader("Expires", 0);
         // Set standard HTTP/1.1 no-cache headers.
@@ -55,7 +67,26 @@ public class AuthController extends BaseController {
         ImageIO.write(bi, "jpg", response.getOutputStream());
     }
 
-    public String getUid(String token) {
-        return "123456";
+    @ApiOperation(value = "登录", notes = "用户登录接口")
+    @RequestMapping(path = {"/login"}, method = POST)
+    public RestModel login(@ApiParam(value = "登录实体", required = true) @RequestBody @Valid LoginReq loginReq, BindingResult bindingResult, HttpServletRequest request) {
+        if (bindingResult.hasErrors()) {
+            return ValidatorUtil.handleBingResult(bindingResult);
+        }
+        User user = userService.login(loginReq);
+        if (user == null) {
+            return RestModel.create().errorMsg("登录失败,用户名或密码错误");
+        }
+        //保存登录会话
+        saveSession(request, user);
+        return RestModel.create().succ();
+    }
+
+    @ApiOperation(value = "登出注销", notes = "平台注销")
+    @RequestMapping(path = {"/logout"}, method = POST)
+    @AuthPassport
+    public RestModel logout(HttpServletRequest request) {
+        removeSession(request);
+        return RestModel.create().succ();
     }
 }
