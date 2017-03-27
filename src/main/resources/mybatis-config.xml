@@ -3,12 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
-    <settings>
-        <setting name="jdbcTypeForNull" value="NULL"/>
-    </settings>
     <typeHandlers>
-        <!--<typeHandler handler="com.tme.common.handler.ValuedEnumTypeHandler" javaType="com.tme.common.content.EntryType"/>
-        <typeHandler handler="com.tme.common.handler.ValuedEnumTypeHandler" javaType="com.tme.common.content.MenuLeaf"/>
-        <typeHandler handler="com.tme.common.handler.ValuedEnumTypeHandler" javaType="com.tme.common.content.MenuTip"/>-->
+        <!--<typeHandler handler="com.gongfu.model.enums.UserTypeHandler" javaType="com.gongfu.model.enums.UserStatus"/>-->
     </typeHandlers>
 </configuration>

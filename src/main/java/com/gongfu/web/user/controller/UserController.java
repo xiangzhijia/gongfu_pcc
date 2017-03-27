@@ -12,6 +12,7 @@ import com.gongfu.web.user.service.system.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.validation.BindingResult;
@@ -30,6 +31,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
  */
 @RestController
 @RequestMapping(path = BaseController.API_ADMIN + "/user", produces = {MediaType.APPLICATION_JSON_VALUE})
+@Slf4j
 @Api(description = "用户管理")
 public class UserController extends BaseController {
     @Autowired
@@ -37,7 +39,6 @@ public class UserController extends BaseController {
 
     @ApiOperation(value = "新增", notes = "用户新增接口")
     @RequestMapping(path = {"/add"}, method = POST)
-    @AuthPassport
     public RestModel saveUser(@ApiParam(value = "用户实体", required = true) @RequestBody @Valid UserReq userReq, BindingResult bindingResult, HttpServletRequest request) {
         if (bindingResult.hasErrors()) {
             return ValidatorUtil.handleBingResult(bindingResult);
@@ -46,7 +47,7 @@ public class UserController extends BaseController {
         user.setUserName(userReq.getName());
         user.setNick(userReq.getNick());
         user.setCreatedAt(new Date());
-        user.setPassword(userReq.getPassword());
+        user.sha256HexPassword(userReq.getPassword());
         user.setLastLoginIp(getRealIp(request));
         Integer result = userService.save(user);
         if (result == 0) {

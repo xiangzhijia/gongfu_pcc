@@ -6,14 +6,15 @@ import com.gongfu.base.BaseServiceImpl;
 import com.gongfu.config.code.StringCode;
 import com.gongfu.mapper.user.UserMapper;
 import com.gongfu.model.user.User;
-import com.gongfu.web.auth.controller.req.LoginReq;
+import com.gongfu.web.user.service.message.MessageService;
 import com.gongfu.web.user.service.system.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  * Created by feng on 2017/1/28.
@@ -25,9 +26,12 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private MessageService messageService;
+
     @Override
-    public User login(LoginReq loginReq) {
-        return userMapper.login(loginReq);
+    public User login(String username) {
+        return userMapper.login(username);
     }
 
     @Override
@@ -40,18 +44,22 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
         PageHelper.startPage(page, size);
         List<User> users = userMapper.getUserPageHelper(beginDate + StringCode.BEGIN, endDate + StringCode.END);
         PageInfo pageInfo = new PageInfo(users);
-        log.info("Execute method asynchronously.1" + Thread.currentThread().getName());
-        toThread();
+        log.info("Execute method asynchronously" + Thread.currentThread().getName());
+        Future<String> future = messageService.openThreadOne();
+        messageService.openThreadTwo();
+
+        try {
+            log.info("future: {}", future.get());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
         return pageInfo;
     }
 
     @Override
     public Long countUserInfo(String beginDate, String endDate) {
         return userMapper.countUserInfo(beginDate + StringCode.BEGIN, endDate + StringCode.END);
-    }
-
-    @Async
-    private void toThread() {
-        log.info("Execute method asynchronously.2" + Thread.currentThread().getName());
     }
 }

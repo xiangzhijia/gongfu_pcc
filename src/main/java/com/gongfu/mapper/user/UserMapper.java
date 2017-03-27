@@ -3,7 +3,6 @@ package com.gongfu.mapper.user;
 
 import com.gongfu.base.PccBaseMapper;
 import com.gongfu.model.user.User;
-import com.gongfu.web.auth.controller.req.LoginReq;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -19,5 +18,5 @@ public interface UserMapper extends PccBaseMapper<User> {
 
     Long countUserInfo(@Param("beginDate") String beginDate, @Param("endDate") String endDate);
 
-    User login(@Param("loginReq") LoginReq loginReq);
+    User login(@Param("username") String username);
 }

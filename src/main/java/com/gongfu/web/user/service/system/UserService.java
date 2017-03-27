@@ -3,7 +3,6 @@ package com.gongfu.web.user.service.system;
 import com.github.pagehelper.PageInfo;
 import com.gongfu.base.BaseService;
 import com.gongfu.model.user.User;
-import com.gongfu.web.auth.controller.req.LoginReq;
 
 import java.util.List;
 
@@ -12,7 +11,7 @@ import java.util.List;
  */
 public interface UserService extends BaseService<User> {
 
-    User login(LoginReq loginReq);
+    User login(String username);
 
     Integer save(User user);
 

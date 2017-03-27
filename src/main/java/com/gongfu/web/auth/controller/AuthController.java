@@ -73,8 +73,8 @@ public class AuthController extends BaseController {
         if (bindingResult.hasErrors()) {
             return ValidatorUtil.handleBingResult(bindingResult);
         }
-        User user = userService.login(loginReq);
-        if (user == null) {
+        User user = userService.login(loginReq.getUsername());
+        if (user == null || !user.validPwd(loginReq.getPassword())) {
             return RestModel.create().errorMsg("登录失败,用户名或密码错误");
         }
         //保存登录会话
