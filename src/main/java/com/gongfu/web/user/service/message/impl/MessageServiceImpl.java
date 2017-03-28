@@ -1,7 +1,7 @@
 package com.gongfu.web.user.service.message.impl;
 
 import com.gongfu.base.BaseServiceImpl;
-import com.gongfu.model.user.Message;
+import com.gongfu.model.message.Message;
 import com.gongfu.web.user.service.message.MessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;

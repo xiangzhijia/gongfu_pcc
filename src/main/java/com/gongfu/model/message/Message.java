@@ -1,4 +1,4 @@
-package com.gongfu.model.user;
+package com.gongfu.model.message;
 
 import lombok.Data;
 
