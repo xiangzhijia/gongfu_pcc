@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 /**
  * Created by feng on 2017/1/28.
@@ -45,16 +43,13 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
         List<User> users = userMapper.getUserPageHelper(beginDate + StringCode.BEGIN, endDate + StringCode.END);
         PageInfo pageInfo = new PageInfo(users);
         log.info("Execute method asynchronously" + Thread.currentThread().getName());
-        Future<String> future = messageService.openThreadOne();
+        //Future<String> future = messageService.openThreadOne();
         messageService.openThreadTwo();
-
-        try {
+        /*try {
             log.info("future: {}", future.get());
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
+        }*/
         return pageInfo;
     }
 

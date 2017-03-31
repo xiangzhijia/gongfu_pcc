@@ -8,6 +8,7 @@ import com.gongfu.config.interceptor.support.enums.Role;
 import com.gongfu.model.user.User;
 import com.gongfu.util.ValidatorUtil;
 import com.gongfu.web.user.controller.req.UserReq;
+import com.gongfu.web.user.rpc.client.PccClient;
 import com.gongfu.web.user.service.system.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -34,6 +35,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 @Slf4j
 @Api(description = "用户管理")
 public class UserController extends BaseController {
+    @Autowired
+    private PccClient pccClient;
+
     @Autowired
     private UserService userService;
 
@@ -100,8 +104,15 @@ public class UserController extends BaseController {
     public RestModel getUserPageHelper(@ApiParam(value = "当前时间", required = true) @RequestParam(value = "beginDate") String beginDate,
                                        @ApiParam(value = "结束时间", required = true) @RequestParam("endDate") String endDate,
                                        @ApiParam(value = "分页大小", required = true, defaultValue = "10") @RequestParam("size") int size,
-                                       @ApiParam(value = "第几页", required = true, defaultValue = "1") @RequestParam("page") int page) throws Exception {
+                                       @ApiParam(value = "第几页", required = true, defaultValue = "1") @RequestParam("page") int page) {
         PageInfo list = userService.getUserPageHelper(beginDate, endDate, size, page);
         return RestModel.create().body(list.getList(), list.getTotal());
+    }
+
+
+    @ApiOperation(value = "测试RPC", notes = "测试RPC")
+    @RequestMapping(value = "rpc", method = GET)
+    public RestModel test() {
+        return RestModel.create().body(pccClient.test(1, "12qw你好"));
     }
 }

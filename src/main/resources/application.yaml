@@ -33,6 +33,13 @@ spring:
          min-idle: 0
       # 连接超时时间（毫秒）
       timeout: 0
+   application:
+      name: pcc-consumer
+
+eureka:
+   client:
+    serviceUrl:
+     defaultZone: http://localhost:8088/eureka/
 
 mybatis:
     type-aliases-package: com.gongfu.model
