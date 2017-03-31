@@ -36,13 +36,9 @@ public class ExecutorConfig {
      */
     @Bean
     public Executor oneAsync() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(corePoolSize);
-        executor.setMaxPoolSize(maxPoolSize);
-        executor.setQueueCapacity(queueCapacity);
-        executor.setThreadNamePrefix("oneExecutor-");
-        executor.initialize();
-        return executor;
+        ThreadPoolTaskExecutor twoExecutor=newExecutor("oneExecutor-");
+        twoExecutor.initialize();
+        return twoExecutor;
     }
 
     /**
@@ -52,15 +48,22 @@ public class ExecutorConfig {
      */
     @Bean
     public Executor twoAsync() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(corePoolSize);
-        executor.setMaxPoolSize(maxPoolSize);
-        executor.setQueueCapacity(queueCapacity);
-        executor.setThreadNamePrefix("twoExecutor-");
+        ThreadPoolTaskExecutor twoExecutor=newExecutor("twoExecutor-");
         // rejection-policy：当pool已经达到max size的时候，如何处理新任务
         // CALLER_RUNS：不在新线程中执行任务，而是有调用者所在的线程来执行
-        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
-        executor.initialize();
-        return executor;
+        twoExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        twoExecutor.initialize();
+        return twoExecutor;
+    }
+
+    private ThreadPoolTaskExecutor newExecutor(String executorName){
+        ThreadPoolTaskExecutor twoExecutor = new ThreadPoolTaskExecutor();
+        twoExecutor.setCorePoolSize(corePoolSize);
+        twoExecutor.setMaxPoolSize(maxPoolSize);
+        twoExecutor.setQueueCapacity(queueCapacity);
+        twoExecutor.setThreadNamePrefix(executorName);
+        return twoExecutor;
+
+
     }
 }
