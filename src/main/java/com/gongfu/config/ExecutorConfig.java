@@ -63,7 +63,5 @@ public class ExecutorConfig {
         twoExecutor.setQueueCapacity(queueCapacity);
         twoExecutor.setThreadNamePrefix(executorName);
         return twoExecutor;
-
-
     }
 }
