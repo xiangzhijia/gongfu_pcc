@@ -13,9 +13,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableDiscoveryClient
 @EnableFeignClients
 @MapperScan(basePackages = "com.gongfu.mapper.*", markerInterface = PccBaseMapper.class)
-public class PccApplication {
+public class GongFuApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(PccApplication.class, args);
+        SpringApplication.run(GongFuApplication.class, args);
     }
 }

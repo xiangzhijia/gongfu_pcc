@@ -6,8 +6,8 @@ import java.util.Map;
 /**
  * 2017年1月8日
  *
- * @向治家 yhqb
- * ErrorCode.java
+ * @向治家
+ *
  **/
 public class ErrorCode {
 
