@@ -5,6 +5,7 @@ import com.gongfu.base.BaseController;
 import com.gongfu.base.RestModel;
 import com.gongfu.config.interceptor.support.AuthPassport;
 import com.gongfu.model.user.User;
+import com.gongfu.util.CryptUtils;
 import com.gongfu.util.ValidatorUtil;
 import com.gongfu.web.auth.controller.req.LoginReq;
 import com.gongfu.web.user.service.system.UserService;
@@ -13,14 +14,12 @@ import com.google.code.kaptcha.Producer;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
@@ -37,6 +36,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @向治家
  **/
 @RestController
+@Slf4j
 @RequestMapping(path = BaseController.API_ADMIN + "/auth", produces = {MediaType.APPLICATION_JSON_VALUE})
 @Api(description = "授权管理")
 public class AuthController extends BaseController {
@@ -70,7 +70,7 @@ public class AuthController extends BaseController {
 
     @ApiOperation(value = "登录", notes = "用户登录接口")
     @RequestMapping(path = {"/login"}, method = POST)
-    public RestModel login(@ApiParam(value = "登录实体", required = true) @RequestBody @Valid LoginReq loginReq, BindingResult bindingResult, HttpServletRequest request) {
+    public RestModel login(@ApiParam(value = "登录实体", required = true) @RequestBody @Valid LoginReq loginReq, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ValidatorUtil.handleBingResult(bindingResult);
         }
@@ -78,16 +78,18 @@ public class AuthController extends BaseController {
         if (user == null || !user.validPwd(loginReq.getPassword())) {
             return RestModel.create().errorMsg("登录失败,用户名或密码错误");
         }
-        //保存登录会话
-        saveSession(request, user);
+        //保存登录会话缓存中
+        String newToken = CryptUtils.generateToken();
+        log.info("newToken : {}",newToken);
+        saveSessionRedis(user,newToken);
         return RestModel.create().succ();
     }
 
     @ApiOperation(value = "登出注销", notes = "平台注销")
     @RequestMapping(path = {"/logout"}, method = POST)
-    @AuthPassport
-    public RestModel logout(HttpServletRequest request) {
-        removeSession(request);
-        return RestModel.create().succ();
+    public RestModel logout(@RequestParam("token") String token) {
+        User user=getSessionRedis(token);
+        log.info("newToken : {}",user);
+        return RestModel.create().body(user);
     }
 }

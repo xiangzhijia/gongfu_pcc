@@ -10,6 +10,11 @@ package com.gongfu.config.interceptor.constant;
 public final class CacheKey {
 
     /**
+     * token缓存
+     */
+    public static final String REGION_TOKEN = "token_";
+
+    /**
      * 用户信息
      */
     public static final String REGION_USER = "user";

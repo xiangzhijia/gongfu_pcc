@@ -112,7 +112,8 @@ public class UserController extends BaseController {
 
     @ApiOperation(value = "测试RPC", notes = "测试RPC")
     @RequestMapping(value = "rpc", method = GET)
-    public RestModel test() {
+    public RestModel test(HttpServletRequest request) {
+        log.info("消费者 sessionId : {}",request.getSession().getId());
         return RestModel.create().body(pccClient.test(1, "12qw你好"));
     }
 }

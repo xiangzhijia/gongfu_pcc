@@ -7,6 +7,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * 2017年1月7日
  *
@@ -43,13 +45,16 @@ public class RedisComponent {
     }
 
 
-    public void objectSet(String key, Object value) {
-        redisTemplate.opsForValue().set(key, value);
+    public void objectSet(String key, Object value,long timeout) {
+        redisTemplate.opsForValue().set(key, value,timeout, TimeUnit.SECONDS);
         log.info("objectSet key success: {}", key);
     }
 
-    public Object objectGet(String key) {
-        return this.redisTemplate.opsForValue().get(key);
+    public Object objectGet(String key,long timeout) {
+        //获取缓存数据时，先更新缓存时间
+        Object o =this.redisTemplate.opsForValue().get(key);
+        //redisTemplate.opsForValue().set(key, o,timeout, TimeUnit.SECONDS);
+        return o;
     }
 
     public void objectDel(String key) {
